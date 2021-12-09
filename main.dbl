@@ -1,0 +1,34 @@
+import ns_extensionsample
+
+main 
+.define D_FORMAT	"ZZZ,ZZZ"
+record 
+    astr	,string
+    tchn    ,int
+    anint	,int
+    fchn	,int
+    aline	,a 10000
+    foo		,@mysealedclass
+proc
+    open(tchn=0, O,"TT:")
+    
+    open(fchn=0, I,"DBLDIR:REL_DBL.TXT")
+    repeat
+      begin
+        reads(fchn, aline, eof)
+        astr = string.Concat(astr, %atrim(aline))
+      end
+eof,
+    
+    ;Call extension method to string class
+    anint = astr.countcaps()
+    
+    writes(tchn, "Total characters in language release notes files = "+ %string(astr.Length,D_FORMAT))
+    writes(tchn, "")
+    writes(tchn,"Number of capitialized characters in the language release notes file = "+ %string(anint,D_FORMAT))
+    
+    ;Call extension method to mysealedclass
+    foo.extmethod()
+    
+    close tchn, fchn
+endmain
